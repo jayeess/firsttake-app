@@ -1,0 +1,95 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isUser(uid) {
+      return request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return request.auth.token.admin == true;
+    }
+
+    function isTalent() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.userType == 'TALENT';
+    }
+
+    function isRecruiter() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.userType == 'RECRUITER';
+    }
+
+    // Users collection
+    match /users/{uid} {
+      allow read: if isUser(uid) || isAdmin();
+      allow list: if isAdmin();
+      allow create: if isUser(uid) && request.resource.data.userType in ['TALENT', 'RECRUITER'];
+      allow update: if isUser(uid) && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['userType', 'email']);
+      allow delete: if isAdmin();
+
+      // Talent profiles subcollection
+      match /talentProfiles/{profileId} {
+        allow read: if isUser(uid) || resource.data.isPublic == true || isAdmin();
+        allow create, update: if isUser(uid) && isTalent();
+        allow delete: if isUser(uid) || isAdmin();
+
+        // Media files subcollection
+        match /mediaFiles/{mediaId} {
+          allow read: if isUser(uid) || isAdmin() ||
+            get(/databases/$(database)/documents/users/$(uid)/talentProfiles/$(profileId)).data.isPublic == true;
+          allow write: if isUser(uid) && isTalent();
+        }
+      }
+
+      // Recruiter profiles subcollection
+      match /recruiterProfiles/{profileId} {
+        allow read: if isAuthenticated();
+        allow create, update: if isUser(uid) && isRecruiter();
+        allow delete: if isUser(uid) || isAdmin();
+      }
+
+      // Notifications subcollection
+      match /notifications/{notificationId} {
+        allow read: if isUser(uid);
+        allow update: if isUser(uid);
+        allow create: if true;
+        allow delete: if isUser(uid) || isAdmin();
+      }
+
+      // Media files at user level
+      match /mediaFiles/{mediaId} {
+        allow read: if isAuthenticated();
+        allow write: if isUser(uid);
+      }
+    }
+
+    // Auditions collection
+    match /auditions/{auditionId} {
+      allow read: if isAuthenticated();
+      allow list: if isAuthenticated();
+      allow create: if isRecruiter();
+      allow update: if request.auth.uid == resource.data.recruiterId || isAdmin();
+      allow delete: if request.auth.uid == resource.data.recruiterId || isAdmin();
+
+      // Applications subcollection
+      match /applications/{applicationId} {
+        allow read: if isAuthenticated() && (
+          request.auth.uid == resource.data.talentId ||
+          request.auth.uid == get(/databases/$(database)/documents/auditions/$(auditionId)).data.recruiterId ||
+          isAdmin()
+        );
+        allow list: if isAuthenticated() && (
+          request.auth.uid == get(/databases/$(database)/documents/auditions/$(auditionId)).data.recruiterId ||
+          isAdmin()
+        );
+        allow create: if isTalent() && request.auth.uid == request.resource.data.talentId;
+        allow update: if isRecruiter() &&
+          request.auth.uid == get(/databases/$(database)/documents/auditions/$(auditionId)).data.recruiterId;
+        allow delete: if isAdmin();
+      }
+    }
+  }
+}
