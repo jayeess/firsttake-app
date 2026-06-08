@@ -6,11 +6,13 @@ class FirebaseConfig {
   static Future<void> initialize() async {
     await Firebase.initializeApp(
       options: const FirebaseOptions(
-        apiKey: String.fromEnvironment('FIREBASE_API_KEY', defaultValue: 'demo-api-key'),
-        appId: String.fromEnvironment('FIREBASE_APP_ID', defaultValue: 'demo-app-id'),
-        messagingSenderId: String.fromEnvironment('FIREBASE_MESSAGING_SENDER_ID', defaultValue: '0'),
-        projectId: String.fromEnvironment('FIREBASE_PROJECT_ID', defaultValue: 'firsttake-demo'),
-        storageBucket: String.fromEnvironment('FIREBASE_STORAGE_BUCKET', defaultValue: 'firsttake-demo.appspot.com'),
+        apiKey: 'AIzaSyD6dYD3vD2BXyj5sYskUgWBASHBQAmQNhM',
+        authDomain: 'first-take-app.firebaseapp.com',
+        projectId: 'first-take-app',
+        storageBucket: 'first-take-app.firebasestorage.app',
+        messagingSenderId: '97111264176',
+        appId: '1:97111264176:web:ba7e471d6da3b834e32475',
+        measurementId: 'G-X7ZXNWLPM3',
       ),
     );
   }
