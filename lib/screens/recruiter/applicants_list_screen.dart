@@ -70,21 +70,15 @@ class ApplicantsListScreen extends ConsumerWidget {
         body: applicationsAsync.when(
           loading: () =>
               const LoadingIndicator(message: 'Loading applicants...'),
-          error: (error, _) => Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.error_outline,
-                    size: 48, color: AppColors.error),
-                const SizedBox(height: 12),
-                Text('Failed to load applicants: $error'),
-                const SizedBox(height: 16),
-                TextButton(
-                  onPressed: () => ref.invalidate(
-                      auditionApplicationsProvider(auditionId)),
-                  child: const Text('Retry'),
-                ),
-              ],
+          error: (error, _) => EmptyState(
+            icon: Icons.error_outline,
+            title: 'Could not load applicants',
+            subtitle: 'Something went wrong. Please try again.',
+            action: TextButton.icon(
+              onPressed: () => ref.invalidate(
+                  auditionApplicationsProvider(auditionId)),
+              icon: const Icon(Icons.refresh),
+              label: const Text('Retry'),
             ),
           ),
           data: (applications) {
@@ -149,14 +143,18 @@ class _FilteredApplicantsList extends StatelessWidget {
         : applications.where((a) => a.status == filter).toList();
 
     if (filtered.isEmpty) {
+      final (emptyTitle, emptySubtitle) = switch (filter) {
+        null => ('No applicants yet', 'Share your audition to receive applications.'),
+        'APPLIED' => ('No new applications', 'New applications will appear here.'),
+        'VIEWED' => ('No viewed applicants', 'Applicants you have viewed will appear here.'),
+        'SHORTLISTED' => ('No shortlisted applicants', 'Shortlist applicants to see them here.'),
+        'REJECTED' => ('No rejected applicants', 'Rejected applicants will appear here.'),
+        _ => ('No applicants', 'Nothing to show for this filter.'),
+      };
       return EmptyState(
         icon: Icons.people_outline,
-        title: filter == null
-            ? 'No applicants yet'
-            : 'No ${filter!.toLowerCase()} applicants',
-        subtitle: filter == null
-            ? 'Share your audition to receive applications.'
-            : null,
+        title: emptyTitle,
+        subtitle: emptySubtitle,
       );
     }
 

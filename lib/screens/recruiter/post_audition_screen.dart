@@ -237,6 +237,9 @@ class _PostAuditionScreenState extends ConsumerState<PostAuditionScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // --- Section: Basic Information ---
+              _buildSectionHeader(context, 'Basic Information'),
+              const SizedBox(height: 12),
               CustomTextField(
                 controller: _titleController,
                 label: 'Title',
@@ -267,12 +270,25 @@ class _PostAuditionScreenState extends ConsumerState<PostAuditionScreen> {
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
+
+              // --- Section: Categorization ---
+              _buildSectionHeader(context, 'Categorization'),
+              const SizedBox(height: 12),
               DropdownButtonFormField<String>(
                 value: _selectedCategory,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Category',
-                  border: OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.category_outlined, color: AppColors.primary),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.border),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                  ),
                 ),
                 items: _categories.map((cat) {
                   return DropdownMenuItem(
@@ -288,9 +304,18 @@ class _PostAuditionScreenState extends ConsumerState<PostAuditionScreen> {
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 value: _selectedExperience,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Experience Level',
-                  border: OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.trending_up_outlined, color: AppColors.primary),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.border),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                  ),
                 ),
                 items: _experienceLevels.map((level) {
                   return DropdownMenuItem(
@@ -303,7 +328,11 @@ class _PostAuditionScreenState extends ConsumerState<PostAuditionScreen> {
                 validator: (value) =>
                     value == null ? 'Please select an experience level' : null,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
+
+              // --- Section: Details ---
+              _buildSectionHeader(context, 'Details'),
+              const SizedBox(height: 12),
               CustomTextField(
                 controller: _locationController,
                 label: 'Location',
@@ -352,7 +381,11 @@ class _PostAuditionScreenState extends ConsumerState<PostAuditionScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
+
+              // --- Section: Scheduling ---
+              _buildSectionHeader(context, 'Scheduling'),
+              const SizedBox(height: 12),
               _buildDateField(
                 label: 'Audition Date',
                 date: _auditionDate,
@@ -364,7 +397,7 @@ class _PostAuditionScreenState extends ConsumerState<PostAuditionScreen> {
                 date: _deadlineDate,
                 onTap: () => _pickDate(isDeadline: true),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 28),
               Row(
                 children: [
                   Expanded(
@@ -396,6 +429,32 @@ class _PostAuditionScreenState extends ConsumerState<PostAuditionScreen> {
     );
   }
 
+  Widget _buildSectionHeader(BuildContext context, String title) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Row(
+        children: [
+          Container(
+            width: 4,
+            height: 20,
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Text(
+            title,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildDateField({
     required String label,
     required DateTime? date,
@@ -407,8 +466,16 @@ class _PostAuditionScreenState extends ConsumerState<PostAuditionScreen> {
       child: InputDecorator(
         decoration: InputDecoration(
           labelText: label,
-          border: const OutlineInputBorder(),
-          suffixIcon: const Icon(Icons.calendar_today, size: 20),
+          prefixIcon: const Icon(Icons.calendar_today, size: 20, color: AppColors.primary),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: AppColors.border),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+          ),
         ),
         child: Text(
           date != null ? date!.formattedDate : 'Select date',
