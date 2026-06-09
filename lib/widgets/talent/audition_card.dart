@@ -16,30 +16,36 @@ class AuditionCard extends StatelessWidget {
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      elevation: 2,
+      shadowColor: Colors.black.withValues(alpha: 0.08),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: Text(
                       audition.title,
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   if (isExpired)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
                         color: AppColors.errorLight,
-                        borderRadius: BorderRadius.circular(4),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Text(
                         'Closed',
@@ -48,56 +54,69 @@ class AuditionCard extends StatelessWidget {
                     ),
                 ],
               ),
-              const SizedBox(height: 8),
-              if (audition.companyName != null)
+              if (audition.companyName != null) ...[
+                const SizedBox(height: 6),
                 Row(
                   children: [
-                    const Icon(Icons.business, size: 16, color: AppColors.textSecondary),
-                    const SizedBox(width: 4),
+                    const Icon(Icons.business, size: 16, color: AppColors.primary),
+                    const SizedBox(width: 6),
                     Text(
                       audition.companyName!,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: AppColors.textSecondary,
+                            fontWeight: FontWeight.w500,
+                          ),
                     ),
                   ],
                 ),
-              const SizedBox(height: 8),
+              ],
+              const SizedBox(height: 12),
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
                 children: [
                   _buildChip(Icons.category, audition.category.displayCategory),
                   if (audition.location != null && audition.location!.isNotEmpty)
-                    _buildChip(Icons.location_on, audition.location!),
+                    _buildChip(Icons.location_on_outlined, audition.location!),
                   if (audition.experienceLevel != null)
-                    _buildChip(Icons.work, audition.experienceLevel!.displayExperience),
+                    _buildChip(Icons.work_outline, audition.experienceLevel!.displayExperience),
                 ],
               ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  if (audition.deadline != null) ...[
-                    Icon(
-                      Icons.schedule,
-                      size: 16,
-                      color: isExpired ? AppColors.error : AppColors.textHint,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      audition.deadline!.daysUntil,
-                      style: TextStyle(
-                        fontSize: 13,
+              const SizedBox(height: 14),
+              Container(
+                padding: const EdgeInsets.only(top: 12),
+                decoration: const BoxDecoration(
+                  border: Border(top: BorderSide(color: AppColors.divider, width: 0.5)),
+                ),
+                child: Row(
+                  children: [
+                    if (audition.deadline != null) ...[
+                      Icon(
+                        Icons.schedule,
+                        size: 16,
                         color: isExpired ? AppColors.error : AppColors.textHint,
-                        fontWeight: FontWeight.w500,
                       ),
-                    ),
+                      const SizedBox(width: 4),
+                      Text(
+                        audition.deadline!.daysUntil,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: isExpired ? AppColors.error : AppColors.textHint,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                    const Spacer(),
+                    if (audition.applicantCount > 0) ...[
+                      const Icon(Icons.people_outline, size: 16, color: AppColors.textHint),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${audition.applicantCount} applicant${audition.applicantCount == 1 ? '' : 's'}',
+                        style: const TextStyle(fontSize: 13, color: AppColors.textHint),
+                      ),
+                    ],
                   ],
-                  const Spacer(),
-                  if (audition.applicantCount > 0)
-                    Text(
-                      '${audition.applicantCount} applicant${audition.applicantCount == 1 ? '' : 's'}',
-                      style: const TextStyle(fontSize: 13, color: AppColors.textHint),
-                    ),
-                ],
+                ),
               ),
             ],
           ),
@@ -108,17 +127,17 @@ class AuditionCard extends StatelessWidget {
 
   Widget _buildChip(IconData icon, String label) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: AppColors.surfaceVariant,
-        borderRadius: BorderRadius.circular(6),
+        color: AppColors.primary.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: AppColors.textSecondary),
-          const SizedBox(width: 4),
-          Text(label, style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+          Icon(icon, size: 14, color: AppColors.primary),
+          const SizedBox(width: 5),
+          Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.textSecondary)),
         ],
       ),
     );

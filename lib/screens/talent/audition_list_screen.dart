@@ -136,30 +136,36 @@ class AuditionListScreen extends ConsumerWidget {
               loading: () => const ShimmerList(),
               error: (error, stack) => _buildErrorState(context, ref, error),
               data: (auditions) {
-                if (auditions.isEmpty) {
-                  return _buildEmptyState(context, ref);
-                }
                 return RefreshIndicator(
                   color: AppColors.primary,
                   onRefresh: () async {
                     ref.invalidate(auditionsProvider);
                   },
-                  child: ListView.builder(
-                    padding: const EdgeInsets.only(top: 8, bottom: 24),
-                    itemCount: auditions.length,
-                    itemBuilder: (context, index) {
-                      final audition = auditions[index];
-                      return AuditionCard(
-                        audition: audition,
-                        onTap: () {
-                          context.pushNamed(
-                            RouteNames.auditionDetail,
-                            pathParameters: {'id': audition.id},
-                          );
-                        },
-                      );
-                    },
-                  ),
+                  child: auditions.isEmpty
+                      ? ListView(
+                          children: [
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.5,
+                              child: _buildEmptyState(context, ref),
+                            ),
+                          ],
+                        )
+                      : ListView.builder(
+                          padding: const EdgeInsets.only(top: 8, bottom: 24),
+                          itemCount: auditions.length,
+                          itemBuilder: (context, index) {
+                            final audition = auditions[index];
+                            return AuditionCard(
+                              audition: audition,
+                              onTap: () {
+                                context.pushNamed(
+                                  RouteNames.auditionDetail,
+                                  pathParameters: {'id': audition.id},
+                                );
+                              },
+                            );
+                          },
+                        ),
                 );
               },
             ),

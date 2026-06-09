@@ -16,7 +16,8 @@ class LoginScreen extends ConsumerStatefulWidget {
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen>
+    with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -92,7 +93,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.error_outline, color: Colors.white, size: 20),
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child:
+                  const Icon(Icons.error_outline, color: Colors.white, size: 18),
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
@@ -100,6 +109,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 style: const TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 14,
+                  letterSpacing: 0.1,
                 ),
               ),
             ),
@@ -107,9 +117,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ),
         backgroundColor: AppColors.error,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         margin: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         duration: const Duration(seconds: 4),
+        elevation: 6,
       ),
     );
   }
@@ -250,6 +262,37 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ).animate().fadeIn(delay: 700.ms, duration: 500.ms),
                     const SizedBox(height: 28),
 
+                    // Divider
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            height: 1,
+                            color: AppColors.border.withValues(alpha: 0.5),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            'OR',
+                            style:
+                                Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: AppColors.textHint,
+                                      fontWeight: FontWeight.w600,
+                                      letterSpacing: 1.2,
+                                    ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            height: 1,
+                            color: AppColors.border.withValues(alpha: 0.5),
+                          ),
+                        ),
+                      ],
+                    ).animate().fadeIn(delay: 750.ms, duration: 500.ms),
+                    const SizedBox(height: 28),
+
                     // Sign up link
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -290,10 +333,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       width: double.infinity,
       padding: EdgeInsets.only(
         top: MediaQuery.of(context).padding.top + 24,
-        bottom: 32,
+        bottom: 36,
       ),
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
@@ -302,61 +345,89 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             AppColors.primaryLight,
           ],
         ),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(32),
-          bottomRight: Radius.circular(32),
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(36),
+          bottomRight: Radius.circular(36),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Column(
         children: [
+          // Logo container with double border effect
           Container(
-            width: 80,
-            height: 80,
+            padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(22),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.2),
-                  blurRadius: 20,
-                  offset: const Offset(0, 8),
-                ),
-              ],
+              borderRadius: BorderRadius.circular(26),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.3),
+                width: 2,
+              ),
             ),
-            child: Center(
-              child: ShaderMask(
-                shaderCallback: (bounds) => const LinearGradient(
-                  colors: [AppColors.primaryDark, AppColors.primary],
-                ).createShader(bounds),
-                child: const Text(
-                  'FT',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.white,
-                    letterSpacing: -1,
+            child: Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(22),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.25),
+                    blurRadius: 24,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: Center(
+                child: ShaderMask(
+                  shaderCallback: (bounds) => const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [AppColors.primaryDark, AppColors.primary],
+                  ).createShader(bounds),
+                  child: const Text(
+                    'FT',
+                    style: TextStyle(
+                      fontSize: 34,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                      letterSpacing: -1,
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 16),
           const Text(
             'FirstTake',
             style: TextStyle(
-              fontSize: 26,
+              fontSize: 28,
               fontWeight: FontWeight.bold,
               color: Colors.white,
               letterSpacing: -0.5,
             ),
           ),
           const SizedBox(height: 4),
-          Text(
-            'Where Talent Meets Opportunity',
-            style: TextStyle(
-              fontSize: 13,
-              color: Colors.white.withValues(alpha: 0.85),
-              letterSpacing: 0.3,
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              'Where Talent Meets Opportunity',
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.white.withValues(alpha: 0.9),
+                letterSpacing: 0.3,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ],
