@@ -129,32 +129,28 @@ class _SettingsTab extends ConsumerWidget {
             onTap: () => context.pushNamed(RouteNames.mediaUpload),
           ),
           const Divider(height: 32),
-          _buildSectionHeader(context, 'Preferences'),
-          ListTile(
-            leading: const Icon(Icons.notifications_outlined, color: AppColors.primary),
-            title: const Text('Push Notifications'),
-            subtitle: const Text('Manage your notification preferences'),
-            trailing: const Icon(Icons.chevron_right, color: AppColors.textHint),
-          ),
-          ListTile(
-            leading: const Icon(Icons.visibility_outlined, color: AppColors.primary),
-            title: const Text('Public Profile'),
-            subtitle: const Text('Allow recruiters to discover your profile'),
-            trailing: const Icon(Icons.chevron_right, color: AppColors.textHint),
-          ),
-          const Divider(height: 32),
           _buildSectionHeader(context, 'Legal'),
           ListTile(
             leading:
                 const Icon(Icons.privacy_tip_outlined, color: AppColors.primary),
             title: const Text('Privacy Policy'),
             trailing: const Icon(Icons.chevron_right, color: AppColors.textHint),
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Privacy Policy coming soon.')),
+              );
+            },
           ),
           ListTile(
             leading:
                 const Icon(Icons.info_outline, color: AppColors.primary),
             title: const Text('Terms of Service'),
             trailing: const Icon(Icons.chevron_right, color: AppColors.textHint),
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Terms of Service coming soon.')),
+              );
+            },
           ),
           const Divider(height: 32),
           ListTile(

@@ -70,7 +70,15 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.error_outline, color: Colors.white, size: 20),
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(Icons.error_outline, color: Colors.white,
+                  size: 18),
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
@@ -78,6 +86,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                 style: const TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 14,
+                  letterSpacing: 0.1,
                 ),
               ),
             ),
@@ -85,9 +94,11 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
         ),
         backgroundColor: AppColors.error,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         margin: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         duration: const Duration(seconds: 4),
+        elevation: 6,
       ),
     );
   }
@@ -108,8 +119,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             child: Center(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 28),
-                child:
-                    _emailSent ? _buildSuccessView() : _buildFormView(),
+                child: _emailSent ? _buildSuccessView() : _buildFormView(),
               ),
             ),
           ),
@@ -126,8 +136,8 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
         bottom: 24,
         left: 8,
       ),
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
@@ -136,10 +146,17 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             AppColors.primaryLight,
           ],
         ),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(32),
-          bottomRight: Radius.circular(32),
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(36),
+          bottomRight: Radius.circular(36),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -148,8 +165,11 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
             onPressed: () => context.pop(),
             icon: const Icon(Icons.arrow_back_ios_new,
                 size: 20, color: Colors.white),
+            style: IconButton.styleFrom(
+              backgroundColor: Colors.white.withValues(alpha: 0.15),
+            ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Center(
             child: Text(
               'Reset Password',
@@ -173,28 +193,37 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Icon
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  AppColors.primary.withValues(alpha: 0.12),
-                  AppColors.primaryLight.withValues(alpha: 0.08),
+          Center(
+            child: Container(
+              width: 88,
+              height: 88,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppColors.primary.withValues(alpha: 0.14),
+                    AppColors.primaryLight.withValues(alpha: 0.08),
+                  ],
+                ),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: AppColors.primary.withValues(alpha: 0.2),
+                  width: 2,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primary.withValues(alpha: 0.08),
+                    blurRadius: 20,
+                    offset: const Offset(0, 6),
+                  ),
                 ],
               ),
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: AppColors.primary.withValues(alpha: 0.15),
-                width: 1.5,
+              child: const Icon(
+                Icons.lock_reset_outlined,
+                size: 40,
+                color: AppColors.primary,
               ),
-            ),
-            child: const Icon(
-              Icons.lock_reset_outlined,
-              size: 38,
-              color: AppColors.primary,
             ),
           ).animate().scale(duration: 500.ms, curve: Curves.easeOutBack),
           const SizedBox(height: 28),
@@ -265,33 +294,59 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Success icon with animated ring
+        // Success icon with animated ring and glow
         Center(
           child: Container(
-            width: 100,
-            height: 100,
+            width: 110,
+            height: 110,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+              gradient: RadialGradient(
                 colors: [
                   AppColors.success.withValues(alpha: 0.15),
-                  AppColors.success.withValues(alpha: 0.05),
+                  AppColors.success.withValues(alpha: 0.03),
                 ],
               ),
-              border: Border.all(
-                color: AppColors.success.withValues(alpha: 0.3),
-                width: 2,
+            ),
+            child: Center(
+              child: Container(
+                width: 84,
+                height: 84,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      AppColors.success.withValues(alpha: 0.18),
+                      AppColors.success.withValues(alpha: 0.06),
+                    ],
+                  ),
+                  border: Border.all(
+                    color: AppColors.success.withValues(alpha: 0.35),
+                    width: 2,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.success.withValues(alpha: 0.15),
+                      blurRadius: 20,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  Icons.mark_email_read_outlined,
+                  size: 42,
+                  color: AppColors.success,
+                ),
               ),
             ),
-            child: const Icon(
-              Icons.mark_email_read_outlined,
-              size: 48,
-              color: AppColors.success,
-            ),
           ),
-        ).animate().scale(duration: 600.ms, curve: Curves.easeOutBack),
+        )
+            .animate()
+            .scale(duration: 600.ms, curve: Curves.easeOutBack)
+            .then()
+            .shimmer(delay: 200.ms, duration: 800.ms),
         const SizedBox(height: 32),
 
         // Title
@@ -312,10 +367,17 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
           decoration: BoxDecoration(
             color: AppColors.primary.withValues(alpha: 0.06),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: AppColors.primary.withValues(alpha: 0.15),
             ),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withValues(alpha: 0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,

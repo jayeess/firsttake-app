@@ -87,7 +87,13 @@ class _MyAuditionsTab extends ConsumerWidget {
     final userId = authState.valueOrNull?.uid;
 
     if (userId == null) {
-      return const Center(child: Text('Please log in to view your auditions.'));
+      return const Scaffold(
+        body: EmptyState(
+          icon: Icons.login,
+          title: 'Please sign in',
+          subtitle: 'You need to be signed in to view your auditions.',
+        ),
+      );
     }
 
     final auditionsAsync = ref.watch(recruiterAuditionsProvider(userId));
@@ -102,29 +108,15 @@ class _MyAuditionsTab extends ConsumerWidget {
       ),
       body: auditionsAsync.when(
         loading: () => const LoadingIndicator(message: 'Loading auditions...'),
-        error: (error, _) => Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.error_outline, size: 48, color: AppColors.error),
-              const SizedBox(height: 12),
-              Text(
-                'Failed to load auditions',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                error.toString(),
-                style: const TextStyle(color: AppColors.textSecondary),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-              TextButton(
-                onPressed: () =>
-                    ref.invalidate(recruiterAuditionsProvider(userId)),
-                child: const Text('Retry'),
-              ),
-            ],
+        error: (error, _) => EmptyState(
+          icon: Icons.error_outline,
+          title: 'Could not load auditions',
+          subtitle: 'Something went wrong. Please try again.',
+          action: TextButton.icon(
+            onPressed: () =>
+                ref.invalidate(recruiterAuditionsProvider(userId)),
+            icon: const Icon(Icons.refresh),
+            label: const Text('Retry'),
           ),
         ),
         data: (auditions) {
@@ -179,7 +171,9 @@ class _AuditionListCard extends StatelessWidget {
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 2,
+      shadowColor: Colors.black.withValues(alpha: 0.08),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       child: InkWell(
         onTap: () {
           context.pushNamed(
@@ -187,13 +181,14 @@ class _AuditionListCard extends StatelessWidget {
             pathParameters: {'auditionId': audition.id},
           );
         },
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: Text(
@@ -201,17 +196,17 @@ class _AuditionListCard extends StatelessWidget {
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
-                      maxLines: 1,
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   const SizedBox(width: 8),
                   Container(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
                       color: statusColor.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(6),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       statusLabel,
@@ -224,22 +219,38 @@ class _AuditionListCard extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
               Row(
                 children: [
-                  const Icon(Icons.people_outline,
-                      size: 16, color: AppColors.textSecondary),
-                  const SizedBox(width: 4),
-                  Text(
-                    '${audition.applicantCount} applicant${audition.applicantCount == 1 ? '' : 's'}',
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: AppColors.textSecondary,
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.06),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.people_outline,
+                            size: 16, color: AppColors.primary),
+                        const SizedBox(width: 5),
+                        Text(
+                          '${audition.applicantCount} applicant${audition.applicantCount == 1 ? '' : 's'}',
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  const Icon(Icons.schedule,
-                      size: 16, color: AppColors.textSecondary),
+                  const SizedBox(width: 10),
+                  Icon(Icons.schedule,
+                      size: 16,
+                      color: audition.deadline!.isPast
+                          ? AppColors.error
+                          : AppColors.textSecondary),
                   const SizedBox(width: 4),
                   Text(
                     audition.deadline!.daysUntil,
@@ -252,24 +263,30 @@ class _AuditionListCard extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Icon(Icons.location_on_outlined,
-                      size: 14, color: AppColors.textHint),
-                  const SizedBox(width: 4),
-                  Text(
-                    audition.location ?? '',
-                    style:
-                        const TextStyle(fontSize: 12, color: AppColors.textHint),
-                  ),
-                  const Spacer(),
-                  Text(
-                    'Deadline: ${audition.deadline!.formattedDate}',
-                    style:
-                        const TextStyle(fontSize: 12, color: AppColors.textHint),
-                  ),
-                ],
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.only(top: 12),
+                decoration: const BoxDecoration(
+                  border: Border(top: BorderSide(color: AppColors.divider, width: 0.5)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.location_on_outlined,
+                        size: 14, color: AppColors.textHint),
+                    const SizedBox(width: 4),
+                    Text(
+                      audition.location ?? '',
+                      style:
+                          const TextStyle(fontSize: 12, color: AppColors.textHint),
+                    ),
+                    const Spacer(),
+                    Text(
+                      'Deadline: ${audition.deadline!.formattedDate}',
+                      style:
+                          const TextStyle(fontSize: 12, color: AppColors.textHint),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

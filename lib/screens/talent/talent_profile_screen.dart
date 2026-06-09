@@ -96,13 +96,19 @@ class TalentProfileScreen extends ConsumerWidget {
               physics: const AlwaysScrollableScrollPhysics(),
               child: Column(
                 children: [
-                  // Profile header
+                  // Profile header with gradient
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(24),
-                    color: AppColors.surface,
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [AppColors.primary, AppColors.primaryDark],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                    ),
                     child: Column(
                       children: [
+                        const SizedBox(height: 24),
                         ProfilePhotoWidget(
                           photoUrl: profile.profilePhotoUrl,
                           initials:
@@ -119,58 +125,127 @@ class TalentProfileScreen extends ConsumerWidget {
                           style: Theme.of(context)
                               .textTheme
                               .headlineSmall
-                              ?.copyWith(fontWeight: FontWeight.bold),
+                              ?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          profile.category.name.displayCategory,
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium
-                              ?.copyWith(color: AppColors.primary),
+                        const SizedBox(height: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            profile.category.name.displayCategory,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
+                          ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 10),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             if (profile.location != null &&
                                 profile.location!.isNotEmpty) ...[
-                              const Icon(Icons.location_on,
+                              Icon(Icons.location_on,
                                   size: 16,
-                                  color: AppColors.textSecondary),
+                                  color: Colors.white.withValues(alpha: 0.8)),
                               const SizedBox(width: 4),
                               Text(
                                 profile.location!,
-                                style: const TextStyle(
-                                    color: AppColors.textSecondary),
+                                style: TextStyle(
+                                    color: Colors.white.withValues(alpha: 0.9)),
                               ),
                               const SizedBox(width: 16),
                             ],
-                            const Icon(Icons.work_outline,
+                            Icon(Icons.work_outline,
                                 size: 16,
-                                color: AppColors.textSecondary),
+                                color: Colors.white.withValues(alpha: 0.8)),
                             const SizedBox(width: 4),
                             Text(
                               experienceLevelToString[
                                       profile.experienceLevel]!
                                   .displayExperience,
-                              style: const TextStyle(
-                                  color: AppColors.textSecondary),
+                              style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.9)),
                             ),
                           ],
                         ),
+                        const SizedBox(height: 24),
                       ],
                     ),
                   ),
+
+                  // Profile completion CTA
+                  if (profile.bio == null || profile.bio!.isEmpty || profile.profilePhotoUrl == null)
+                    Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: AppColors.warningLight,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppColors.warning.withValues(alpha: 0.3)),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.tips_and_updates_outlined, size: 22, color: AppColors.warning),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Complete your profile',
+                                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  profile.bio == null || profile.bio!.isEmpty
+                                      ? 'Add a bio to stand out to recruiters.'
+                                      : 'Add a profile photo for a professional look.',
+                                  style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          TextButton(
+                            onPressed: () => context.pushNamed(RouteNames.editTalentProfile),
+                            style: TextButton.styleFrom(
+                              foregroundColor: AppColors.warning,
+                              padding: const EdgeInsets.symmetric(horizontal: 12),
+                            ),
+                            child: const Text('Update', style: TextStyle(fontWeight: FontWeight.w600)),
+                          ),
+                        ],
+                      ),
+                    ),
 
                   const SizedBox(height: 8),
 
                   // Stats section
                   Container(
                     width: double.infinity,
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16, vertical: 20),
-                    color: AppColors.surface,
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(14),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.06),
+                          blurRadius: 10,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
                     child: Row(
                       children: [
                         Expanded(
@@ -219,7 +294,18 @@ class TalentProfileScreen extends ConsumerWidget {
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(20),
-                      color: AppColors.surface,
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(14),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.06),
+                            blurRadius: 10,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -251,7 +337,18 @@ class TalentProfileScreen extends ConsumerWidget {
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(20),
-                    color: AppColors.surface,
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(14),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.06),
+                          blurRadius: 10,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -282,7 +379,18 @@ class TalentProfileScreen extends ConsumerWidget {
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(20),
-                      color: AppColors.surface,
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(14),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.06),
+                            blurRadius: 10,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -328,7 +436,7 @@ class TalentProfileScreen extends ConsumerWidget {
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(20),
-                    color: AppColors.surface,
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
                     child: Column(
                       children: [
                         CustomButton(

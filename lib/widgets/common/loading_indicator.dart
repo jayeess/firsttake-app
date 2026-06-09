@@ -13,10 +13,30 @@ class LoadingIndicator extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const CircularProgressIndicator(color: AppColors.primary),
+          Container(
+            width: 56,
+            height: 56,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.08),
+              shape: BoxShape.circle,
+            ),
+            child: const CircularProgressIndicator(
+              color: AppColors.primary,
+              strokeWidth: 3,
+              strokeCap: StrokeCap.round,
+            ),
+          ),
           if (message != null) ...[
-            const SizedBox(height: 16),
-            Text(message!, style: Theme.of(context).textTheme.bodyMedium),
+            const SizedBox(height: 20),
+            Text(
+              message!,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppColors.textSecondary,
+                    fontWeight: FontWeight.w500,
+                  ),
+              textAlign: TextAlign.center,
+            ),
           ],
         ],
       ),
@@ -46,7 +66,7 @@ class ShimmerList extends StatelessWidget {
             margin: const EdgeInsets.only(bottom: 12),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(14),
             ),
           );
         },
@@ -77,23 +97,47 @@ class EmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 64, color: AppColors.textHint),
-            const SizedBox(height: 16),
+            Container(
+              width: 88,
+              height: 88,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppColors.surfaceVariant,
+                    AppColors.surfaceVariant.withValues(alpha: 0.5),
+                  ],
+                ),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: AppColors.border.withValues(alpha: 0.5),
+                ),
+              ),
+              child: Icon(icon, size: 40, color: AppColors.textHint),
+            ),
+            const SizedBox(height: 24),
             Text(
               title,
-              style: Theme.of(context).textTheme.titleLarge,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
               textAlign: TextAlign.center,
             ),
             if (subtitle != null) ...[
-              const SizedBox(height: 8),
+              const SizedBox(height: 10),
               Text(
                 subtitle!,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: AppColors.textSecondary,
+                      height: 1.5,
+                    ),
                 textAlign: TextAlign.center,
               ),
             ],
             if (action != null) ...[
-              const SizedBox(height: 24),
+              const SizedBox(height: 28),
               action!,
             ],
           ],
