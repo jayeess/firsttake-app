@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../services/firestore_service.dart';
 import '../models/audition_model.dart';
@@ -6,11 +7,16 @@ import 'user_provider.dart';
 final auditionsProvider =
     FutureProvider.autoDispose<List<Audition>>((ref) async {
   final filters = ref.watch(auditionFiltersProvider);
-  return ref.read(firestoreServiceProvider).getAllAuditions(
-        category: filters.category,
-        location: filters.location,
-        searchQuery: filters.searchQuery,
-      );
+  try {
+    return await ref.read(firestoreServiceProvider).getAllAuditions(
+          category: filters.category,
+          location: filters.location,
+          searchQuery: filters.searchQuery,
+        );
+  } catch (e) {
+    debugPrint('auditionsProvider error: $e');
+    return <Audition>[];
+  }
 });
 
 final auditionDetailProvider = FutureProvider.autoDispose

@@ -32,44 +32,63 @@ class AuditionListScreen extends ConsumerWidget {
         children: [
           // Search bar
           Container(
-            color: AppColors.primary,
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'Search auditions...',
-                hintStyle: const TextStyle(color: AppColors.textHint),
-                prefixIcon:
-                    const Icon(Icons.search, color: AppColors.textSecondary),
-                suffixIcon: filters.searchQuery != null &&
-                        filters.searchQuery!.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear,
-                            color: AppColors.textSecondary),
-                        onPressed: () {
-                          ref.read(auditionFiltersProvider.notifier).state =
-                              filters.copyWith(searchQuery: '');
-                        },
-                      )
-                    : null,
-                filled: true,
-                fillColor: Colors.white,
-                contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
+            decoration: const BoxDecoration(
+              color: AppColors.primary,
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20),
               ),
-              onChanged: (value) {
-                ref.read(auditionFiltersProvider.notifier).state =
-                    filters.copyWith(searchQuery: value);
-              },
+            ),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+            child: Material(
+              elevation: 2,
+              borderRadius: BorderRadius.circular(12),
+              shadowColor: Colors.black26,
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'Search by role, location, or category...',
+                  hintStyle: TextStyle(color: AppColors.textHint.withValues(alpha: 0.7), fontSize: 14),
+                  prefixIcon:
+                      const Icon(Icons.search, color: AppColors.primary),
+                  suffixIcon: filters.searchQuery != null &&
+                          filters.searchQuery!.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(Icons.clear,
+                              size: 20, color: AppColors.textHint),
+                          onPressed: () {
+                            ref.read(auditionFiltersProvider.notifier).state =
+                                filters.copyWith(searchQuery: '');
+                          },
+                        )
+                      : null,
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                  ),
+                ),
+                onChanged: (value) {
+                  ref.read(auditionFiltersProvider.notifier).state =
+                      filters.copyWith(searchQuery: value);
+                },
+              ),
             ),
           ),
 
           // Filter chips
           Container(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            color: AppColors.surface,
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            color: AppColors.background,
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -151,18 +170,48 @@ class AuditionListScreen extends ConsumerWidget {
   }
 
   Widget _buildEmptyState(BuildContext context, WidgetRef ref) {
-    return EmptyState(
-      icon: Icons.search_off,
-      title: 'No auditions found',
-      subtitle:
-          'Try adjusting your search or filters to find more opportunities.',
-      action: TextButton.icon(
-        onPressed: () {
-          ref.read(auditionFiltersProvider.notifier).state =
-              const AuditionFilters();
-        },
-        icon: const Icon(Icons.refresh),
-        label: const Text('Clear Filters'),
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: AppColors.primaryLight.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.search_off, size: 48, color: AppColors.primary),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'No auditions found',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Try adjusting your search or filters to discover more opportunities.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 14, height: 1.5),
+            ),
+            const SizedBox(height: 20),
+            OutlinedButton.icon(
+              onPressed: () {
+                ref.read(auditionFiltersProvider.notifier).state =
+                    const AuditionFilters();
+              },
+              icon: const Icon(Icons.refresh, size: 18),
+              label: const Text('Clear All Filters'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppColors.primary,
+                side: const BorderSide(color: AppColors.primary),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -344,35 +393,41 @@ class _FilterChipWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-        decoration: BoxDecoration(
-          color: isActive ? AppColors.primary : AppColors.surfaceVariant,
-          borderRadius: BorderRadius.circular(20),
-          border: isActive
-              ? null
-              : Border.all(color: AppColors.border, width: 1),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: isActive ? Colors.white : AppColors.textPrimary,
+    return Material(
+      color: isActive ? AppColors.primary : AppColors.surface,
+      elevation: isActive ? 2 : 0,
+      shadowColor: isActive ? AppColors.primary.withValues(alpha: 0.3) : Colors.transparent,
+      borderRadius: BorderRadius.circular(24),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(24),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24),
+            border: isActive
+                ? null
+                : Border.all(color: AppColors.border, width: 1),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
+                  color: isActive ? Colors.white : AppColors.textPrimary,
+                ),
               ),
-            ),
-            const SizedBox(width: 4),
-            Icon(
-              Icons.keyboard_arrow_down,
-              size: 18,
-              color: isActive ? Colors.white : AppColors.textSecondary,
-            ),
-          ],
+              const SizedBox(width: 4),
+              Icon(
+                Icons.keyboard_arrow_down,
+                size: 18,
+                color: isActive ? Colors.white : AppColors.textSecondary,
+              ),
+            ],
+          ),
         ),
       ),
     );

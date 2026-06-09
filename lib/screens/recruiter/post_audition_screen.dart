@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 import '../../models/audition_model.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/user_provider.dart';
@@ -137,6 +134,21 @@ class _PostAuditionScreenState extends ConsumerState<PostAuditionScreen> {
     });
 
     try {
+      final firestoreService = ref.read(firestoreServiceProvider);
+
+      // Fetch recruiter profile to populate recruiterName and companyName.
+      final recruiterProfile =
+          await firestoreService.getRecruiterProfile(userId);
+
+      // Use the Firebase Auth display name for recruiterName, falling back to
+      // companyName or email so the audition always shows a human-readable
+      // poster identity.
+      final authUser = ref.read(authStateProvider).valueOrNull;
+      final recruiterDisplayName = authUser?.displayName ??
+          recruiterProfile?.companyName ??
+          authUser?.email ??
+          '';
+
       final now = DateTime.now();
       final audition = Audition(
         id: '',
@@ -154,9 +166,10 @@ class _PostAuditionScreenState extends ConsumerState<PostAuditionScreen> {
         applicantCount: 0,
         createdAt: now,
         updatedAt: now,
+        recruiterName: recruiterDisplayName,
+        companyName: recruiterProfile?.companyName,
       );
 
-      final firestoreService = ref.read(firestoreServiceProvider);
       await firestoreService.createAudition(audition);
 
       ref.invalidate(recruiterAuditionsProvider(userId));

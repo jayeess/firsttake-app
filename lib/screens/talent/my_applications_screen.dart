@@ -7,6 +7,7 @@ import '../../providers/application_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../routing/route_names.dart';
 import '../../utils/theme/app_colors.dart';
+import 'talent_home_screen.dart';
 import '../../widgets/talent/application_status_card.dart';
 import '../../widgets/common/loading_indicator.dart';
 
@@ -70,12 +71,14 @@ class _ApplicationsContent extends ConsumerWidget {
             isScrollable: true,
             indicatorColor: Colors.white,
             indicatorWeight: 3,
+            indicatorSize: TabBarIndicatorSize.label,
             labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
+            unselectedLabelColor: Colors.white60,
             labelStyle: const TextStyle(
-                fontSize: 14, fontWeight: FontWeight.w600),
+                fontSize: 14, fontWeight: FontWeight.w600, letterSpacing: 0.3),
             unselectedLabelStyle: const TextStyle(fontSize: 14),
             tabAlignment: TabAlignment.start,
+            dividerColor: Colors.transparent,
             tabs: _tabs.map((t) => Tab(text: t)).toList(),
           ),
         ),
@@ -177,12 +180,19 @@ class _ApplicationsContent extends ConsumerWidget {
       title: title,
       subtitle: subtitle,
       action: tab == 'All'
-          ? TextButton.icon(
+          ? ElevatedButton.icon(
               onPressed: () {
-                // Navigate to browse tab - parent TalentHomeScreen handles this
+                final homeState = context.findAncestorStateOfType<TalentHomeScreenState>();
+                homeState?.switchToTab(0);
               },
-              icon: const Icon(Icons.search),
+              icon: const Icon(Icons.search, size: 18),
               label: const Text('Browse Auditions'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              ),
             )
           : null,
     );

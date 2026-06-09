@@ -13,11 +13,15 @@ class TalentHomeScreen extends ConsumerStatefulWidget {
   const TalentHomeScreen({super.key});
 
   @override
-  ConsumerState<TalentHomeScreen> createState() => _TalentHomeScreenState();
+  ConsumerState<TalentHomeScreen> createState() => TalentHomeScreenState();
 }
 
-class _TalentHomeScreenState extends ConsumerState<TalentHomeScreen> {
+class TalentHomeScreenState extends ConsumerState<TalentHomeScreen> {
   int _currentIndex = 0;
+
+  void switchToTab(int index) {
+    setState(() => _currentIndex = index);
+  }
 
   final List<Widget> _tabs = const [
     AuditionListScreen(),
@@ -126,49 +130,31 @@ class _SettingsTab extends ConsumerWidget {
           ),
           const Divider(height: 32),
           _buildSectionHeader(context, 'Preferences'),
-          SwitchListTile(
-            secondary:
-                const Icon(Icons.notifications_outlined, color: AppColors.primary),
+          ListTile(
+            leading: const Icon(Icons.notifications_outlined, color: AppColors.primary),
             title: const Text('Push Notifications'),
-            value: true,
-            activeColor: AppColors.primary,
-            onChanged: (value) {
-              // Notification preference toggle placeholder
-            },
+            subtitle: const Text('Manage your notification preferences'),
+            trailing: const Icon(Icons.chevron_right, color: AppColors.textHint),
           ),
-          SwitchListTile(
-            secondary:
-                const Icon(Icons.visibility_outlined, color: AppColors.primary),
+          ListTile(
+            leading: const Icon(Icons.visibility_outlined, color: AppColors.primary),
             title: const Text('Public Profile'),
             subtitle: const Text('Allow recruiters to discover your profile'),
-            value: true,
-            activeColor: AppColors.primary,
-            onChanged: (value) {
-              // Public profile toggle placeholder
-            },
+            trailing: const Icon(Icons.chevron_right, color: AppColors.textHint),
           ),
           const Divider(height: 32),
-          _buildSectionHeader(context, 'Support'),
+          _buildSectionHeader(context, 'Legal'),
           ListTile(
             leading:
-                const Icon(Icons.help_outline, color: AppColors.primary),
-            title: const Text('Help & FAQ'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () {},
-          ),
-          ListTile(
-            leading: const Icon(Icons.privacy_tip_outlined,
-                color: AppColors.primary),
+                const Icon(Icons.privacy_tip_outlined, color: AppColors.primary),
             title: const Text('Privacy Policy'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () {},
+            trailing: const Icon(Icons.chevron_right, color: AppColors.textHint),
           ),
           ListTile(
             leading:
                 const Icon(Icons.info_outline, color: AppColors.primary),
             title: const Text('Terms of Service'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () {},
+            trailing: const Icon(Icons.chevron_right, color: AppColors.textHint),
           ),
           const Divider(height: 32),
           ListTile(

@@ -58,15 +58,15 @@ class Audition {
       requirements: map['requirements'] as String?,
       numberOfPositions: map['numberOfPositions'] as int? ?? 1,
       payInfo: map['payInfo'] as String?,
-      deadline: map['deadline'] != null ? (map['deadline'] as Timestamp).toDate() : null,
+      deadline: map['deadline'] is Timestamp ? (map['deadline'] as Timestamp).toDate() : null,
       status: AuditionStatus.values.firstWhere(
         (e) => e.name == map['status'],
         orElse: () => AuditionStatus.ACTIVE,
       ),
       applicantCount: map['applicantCount'] as int? ?? 0,
-      createdAt: map['createdAt'] != null ? (map['createdAt'] as Timestamp).toDate() : null,
-      updatedAt: map['updatedAt'] != null ? (map['updatedAt'] as Timestamp).toDate() : null,
-      closedDate: map['closedDate'] != null ? (map['closedDate'] as Timestamp).toDate() : null,
+      createdAt: map['createdAt'] is Timestamp ? (map['createdAt'] as Timestamp).toDate() : null,
+      updatedAt: map['updatedAt'] is Timestamp ? (map['updatedAt'] as Timestamp).toDate() : null,
+      closedDate: map['closedDate'] is Timestamp ? (map['closedDate'] as Timestamp).toDate() : null,
       recruiterName: map['recruiterName'] as String?,
       companyName: map['companyName'] as String?,
     );
@@ -88,8 +88,12 @@ class Audition {
       'deadline': deadline != null ? Timestamp.fromDate(deadline!) : null,
       'status': status.name,
       'applicantCount': applicantCount,
-      'createdAt': createdAt != null ? Timestamp.fromDate(createdAt!) : null,
-      'updatedAt': updatedAt != null ? Timestamp.fromDate(updatedAt!) : null,
+      'createdAt': createdAt != null
+          ? Timestamp.fromDate(createdAt!)
+          : FieldValue.serverTimestamp(),
+      'updatedAt': updatedAt != null
+          ? Timestamp.fromDate(updatedAt!)
+          : FieldValue.serverTimestamp(),
       'closedDate': closedDate != null ? Timestamp.fromDate(closedDate!) : null,
       'recruiterName': recruiterName,
       'companyName': companyName,

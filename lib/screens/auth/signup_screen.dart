@@ -97,11 +97,26 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: Row(
+          children: [
+            const Icon(Icons.error_outline, color: Colors.white, size: 20),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                message,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+          ],
+        ),
         backgroundColor: AppColors.error,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         margin: const EdgeInsets.all(16),
+        duration: const Duration(seconds: 4),
       ),
     );
   }
@@ -110,219 +125,279 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const SizedBox(height: 16),
+      body: Column(
+        children: [
+          // Gradient header
+          _buildHeader()
+              .animate()
+              .fadeIn(duration: 600.ms)
+              .slideY(begin: -0.15, end: 0, duration: 600.ms),
 
-                  // Back button row
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: IconButton(
-                      onPressed: () => context.pop(),
-                      icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
+          // Form area
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 28),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const SizedBox(height: 28),
 
-                  // Title
-                  Text(
-                    'Create Account',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
+                    // User type toggle
+                    Text(
+                      'I am a',
+                      style:
+                          Theme.of(context).textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textPrimary,
+                              ),
+                      textAlign: TextAlign.center,
+                    ).animate().fadeIn(delay: 200.ms, duration: 500.ms),
+                    const SizedBox(height: 14),
+                    _buildUserTypeToggle()
+                        .animate()
+                        .fadeIn(delay: 300.ms, duration: 500.ms),
+                    const SizedBox(height: 28),
+
+                    // Email field
+                    CustomTextField(
+                      controller: _emailController,
+                      label: 'Email',
+                      hint: 'Enter your email',
+                      keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.next,
+                      prefixIcon: const Icon(Icons.email_outlined),
+                      validator: EmailValidator.validate,
+                    ).animate().fadeIn(delay: 400.ms, duration: 500.ms),
+                    const SizedBox(height: 20),
+
+                    // Password field
+                    CustomTextField(
+                      controller: _passwordController,
+                      label: 'Password',
+                      hint: 'Create a password',
+                      obscureText: _obscurePassword,
+                      textInputAction: TextInputAction.next,
+                      prefixIcon: const Icon(Icons.lock_outlined),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                          color: AppColors.textHint,
                         ),
-                    textAlign: TextAlign.center,
-                  ).animate().fadeIn(duration: 400.ms),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Join FirstTake and start your journey',
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                    textAlign: TextAlign.center,
-                  ).animate().fadeIn(delay: 100.ms, duration: 400.ms),
-                  const SizedBox(height: 32),
-
-                  // User type toggle
-                  Text(
-                    'I am a',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
-                        ),
-                    textAlign: TextAlign.center,
-                  ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
-                  const SizedBox(height: 12),
-                  _buildUserTypeToggle()
-                      .animate()
-                      .fadeIn(delay: 300.ms, duration: 400.ms),
-                  const SizedBox(height: 28),
-
-                  // Email field
-                  CustomTextField(
-                    controller: _emailController,
-                    label: 'Email',
-                    hint: 'Enter your email',
-                    keyboardType: TextInputType.emailAddress,
-                    textInputAction: TextInputAction.next,
-                    prefixIcon: const Icon(Icons.email_outlined),
-                    validator: EmailValidator.validate,
-                  ).animate().fadeIn(delay: 400.ms, duration: 400.ms),
-                  const SizedBox(height: 16),
-
-                  // Password field
-                  CustomTextField(
-                    controller: _passwordController,
-                    label: 'Password',
-                    hint: 'Create a password',
-                    obscureText: _obscurePassword,
-                    textInputAction: TextInputAction.next,
-                    prefixIcon: const Icon(Icons.lock_outlined),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword
-                            ? Icons.visibility_off_outlined
-                            : Icons.visibility_outlined,
-                        color: AppColors.textHint,
+                        onPressed: () {
+                          setState(() => _obscurePassword = !_obscurePassword);
+                        },
                       ),
-                      onPressed: () {
-                        setState(() => _obscurePassword = !_obscurePassword);
-                      },
-                    ),
-                    validator: PasswordValidator.validate,
-                  ).animate().fadeIn(delay: 500.ms, duration: 400.ms),
-                  const SizedBox(height: 16),
+                      validator: PasswordValidator.validate,
+                    ).animate().fadeIn(delay: 500.ms, duration: 500.ms),
+                    const SizedBox(height: 20),
 
-                  // Confirm password field
-                  CustomTextField(
-                    controller: _confirmPasswordController,
-                    label: 'Confirm Password',
-                    hint: 'Confirm your password',
-                    obscureText: _obscureConfirmPassword,
-                    textInputAction: TextInputAction.done,
-                    prefixIcon: const Icon(Icons.lock_outlined),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscureConfirmPassword
-                            ? Icons.visibility_off_outlined
-                            : Icons.visibility_outlined,
-                        color: AppColors.textHint,
-                      ),
-                      onPressed: () {
-                        setState(() =>
-                            _obscureConfirmPassword = !_obscureConfirmPassword);
-                      },
-                    ),
-                    validator: (value) => PasswordValidator.validateConfirm(
-                      value,
-                      _passwordController.text,
-                    ),
-                    onFieldSubmitted: (_) => _handleSignup(),
-                  ).animate().fadeIn(delay: 600.ms, duration: 400.ms),
-                  const SizedBox(height: 20),
-
-                  // Terms checkbox
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 24,
-                        width: 24,
-                        child: Checkbox(
-                          value: _acceptedTerms,
-                          onChanged: (val) {
-                            setState(() => _acceptedTerms = val ?? false);
-                          },
-                          activeColor: AppColors.primary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4),
-                          ),
+                    // Confirm password field
+                    CustomTextField(
+                      controller: _confirmPasswordController,
+                      label: 'Confirm Password',
+                      hint: 'Confirm your password',
+                      obscureText: _obscureConfirmPassword,
+                      textInputAction: TextInputAction.done,
+                      prefixIcon: const Icon(Icons.lock_outlined),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscureConfirmPassword
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                          color: AppColors.textHint,
                         ),
+                        onPressed: () {
+                          setState(() => _obscureConfirmPassword =
+                              !_obscureConfirmPassword);
+                        },
                       ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() => _acceptedTerms = !_acceptedTerms);
-                          },
-                          child: RichText(
-                            text: TextSpan(
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(color: AppColors.textSecondary),
-                              children: const [
-                                TextSpan(text: 'I agree to the '),
-                                TextSpan(
-                                  text: 'Terms of Service',
-                                  style: TextStyle(
-                                    color: AppColors.primary,
-                                    fontWeight: FontWeight.w600,
+                      validator: (value) => PasswordValidator.validateConfirm(
+                        value,
+                        _passwordController.text,
+                      ),
+                      onFieldSubmitted: (_) => _handleSignup(),
+                    ).animate().fadeIn(delay: 600.ms, duration: 500.ms),
+                    const SizedBox(height: 22),
+
+                    // Terms checkbox
+                    _buildTermsCheckbox()
+                        .animate()
+                        .fadeIn(delay: 700.ms, duration: 500.ms),
+                    const SizedBox(height: 28),
+
+                    // Signup button
+                    CustomButton(
+                      label: 'Create Account',
+                      onPressed: _isLoading ? null : _handleSignup,
+                      isLoading: _isLoading,
+                    ).animate().fadeIn(delay: 800.ms, duration: 500.ms),
+                    const SizedBox(height: 24),
+
+                    // Login link
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Already have an account? ',
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: AppColors.textSecondary,
                                   ),
-                                ),
-                                TextSpan(text: ' and '),
-                                TextSpan(
-                                  text: 'Privacy Policy',
-                                  style: TextStyle(
-                                    color: AppColors.primary,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
+                        ),
+                        GestureDetector(
+                          onTap: () => context.pop(),
+                          child: const Text(
+                            'Login',
+                            style: TextStyle(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ).animate().fadeIn(delay: 700.ms, duration: 400.ms),
-                  const SizedBox(height: 28),
-
-                  // Signup button
-                  CustomButton(
-                    label: 'Create Account',
-                    onPressed: _isLoading ? null : _handleSignup,
-                    isLoading: _isLoading,
-                  ).animate().fadeIn(delay: 800.ms, duration: 400.ms),
-                  const SizedBox(height: 24),
-
-                  // Login link
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Already have an account? ',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: AppColors.textSecondary,
-                            ),
-                      ),
-                      GestureDetector(
-                        onTap: () => context.pop(),
-                        child: const Text(
-                          'Login',
-                          style: TextStyle(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ).animate().fadeIn(delay: 900.ms, duration: 400.ms),
-                  const SizedBox(height: 32),
-                ],
+                      ],
+                    ).animate().fadeIn(delay: 900.ms, duration: 500.ms),
+                    const SizedBox(height: 32),
+                  ],
+                ),
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.only(
+        top: MediaQuery.of(context).padding.top + 12,
+        bottom: 24,
+        left: 8,
+      ),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.primaryDark,
+            AppColors.primary,
+            AppColors.primaryLight,
+          ],
         ),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(32),
+          bottomRight: Radius.circular(32),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          IconButton(
+            onPressed: () => context.pop(),
+            icon: const Icon(Icons.arrow_back_ios_new,
+                size: 20, color: Colors.white),
+          ),
+          const SizedBox(height: 8),
+          Center(
+            child: Column(
+              children: [
+                Text(
+                  'Create Account',
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        letterSpacing: -0.5,
+                      ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Join FirstTake and start your journey',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white.withValues(alpha: 0.85),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTermsCheckbox() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      decoration: BoxDecoration(
+        color: _acceptedTerms
+            ? AppColors.primary.withValues(alpha: 0.05)
+            : AppColors.surfaceVariant.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: _acceptedTerms
+              ? AppColors.primary.withValues(alpha: 0.3)
+              : AppColors.border.withValues(alpha: 0.5),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            height: 24,
+            width: 24,
+            child: Checkbox(
+              value: _acceptedTerms,
+              onChanged: (val) {
+                setState(() => _acceptedTerms = val ?? false);
+              },
+              activeColor: AppColors.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                setState(() => _acceptedTerms = !_acceptedTerms);
+              },
+              child: RichText(
+                text: TextSpan(
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.copyWith(color: AppColors.textSecondary),
+                  children: const [
+                    TextSpan(text: 'I agree to the '),
+                    TextSpan(
+                      text: 'Terms of Service',
+                      style: TextStyle(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    TextSpan(text: ' and '),
+                    TextSpan(
+                      text: 'Privacy Policy',
+                      style: TextStyle(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -331,22 +406,27 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surfaceVariant,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border.withValues(alpha: 0.5)),
       ),
-      padding: const EdgeInsets.all(4),
+      padding: const EdgeInsets.all(5),
       child: Row(
         children: [
           _buildToggleOption(
             label: 'Talent',
-            icon: Icons.star_outline,
+            icon: Icons.star_rounded,
+            description: 'Showcase your skills',
             isSelected: _selectedUserType == UserType.TALENT,
             onTap: () => setState(() => _selectedUserType = UserType.TALENT),
           ),
+          const SizedBox(width: 6),
           _buildToggleOption(
             label: 'Recruiter',
-            icon: Icons.business_outlined,
+            icon: Icons.business_rounded,
+            description: 'Find top talent',
             isSelected: _selectedUserType == UserType.RECRUITER,
-            onTap: () => setState(() => _selectedUserType = UserType.RECRUITER),
+            onTap: () =>
+                setState(() => _selectedUserType = UserType.RECRUITER),
           ),
         ],
       ),
@@ -356,6 +436,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   Widget _buildToggleOption({
     required String label,
     required IconData icon,
+    required String description,
     required bool isSelected,
     required VoidCallback onTap,
   }) {
@@ -363,37 +444,64 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       child: GestureDetector(
         onTap: onTap,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 250),
+          duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
-          padding: const EdgeInsets.symmetric(vertical: 14),
+          padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.primary : Colors.transparent,
-            borderRadius: BorderRadius.circular(11),
+            color: isSelected ? Colors.white : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
             boxShadow: isSelected
                 ? [
                     BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
+                      color: AppColors.primary.withValues(alpha: 0.15),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
                     ),
                   ]
                 : null,
+            border: isSelected
+                ? Border.all(
+                    color: AppColors.primary.withValues(alpha: 0.3),
+                    width: 1.5,
+                  )
+                : null,
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: Column(
             children: [
-              Icon(
-                icon,
-                size: 20,
-                color: isSelected ? Colors.white : AppColors.textSecondary,
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? AppColors.primary.withValues(alpha: 0.1)
+                      : AppColors.surfaceVariant,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  icon,
+                  size: 20,
+                  color:
+                      isSelected ? AppColors.primary : AppColors.textSecondary,
+                ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(height: 8),
               Text(
                 label,
                 style: TextStyle(
                   fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: isSelected ? Colors.white : AppColors.textSecondary,
+                  fontWeight: FontWeight.w700,
+                  color:
+                      isSelected ? AppColors.primary : AppColors.textSecondary,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                description,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: isSelected
+                      ? AppColors.textSecondary
+                      : AppColors.textHint,
                 ),
               ),
             ],

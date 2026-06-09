@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 import '../models/user_model.dart';
 import '../models/talent_profile_model.dart';
@@ -161,14 +162,20 @@ class FirestoreService {
       query = query.limit(limit);
 
       final snapshot = await query.get();
-      List<Audition> auditions = snapshot.docs
-          .map((doc) => Audition.fromMap(doc.data() as Map<String, dynamic>))
-          .toList();
+      final List<Audition> auditions = [];
+      for (final doc in snapshot.docs) {
+        try {
+          auditions.add(Audition.fromMap(doc.data() as Map<String, dynamic>));
+        } catch (e) {
+          // Skip malformed documents so one bad record doesn't break the list.
+          debugPrint('Skipping audition ${doc.id}: $e');
+        }
+      }
 
       // Client-side title/description search when a search query is provided.
       if (searchQuery != null && searchQuery.isNotEmpty) {
         final lowerQuery = searchQuery.toLowerCase();
-        auditions = auditions
+        return auditions
             .where((a) =>
                 a.title.toLowerCase().contains(lowerQuery) ||
                 a.description.toLowerCase().contains(lowerQuery))
@@ -177,6 +184,7 @@ class FirestoreService {
 
       return auditions;
     } catch (e) {
+      debugPrint('Failed to get auditions: $e');
       throw Exception('Failed to get auditions: $e');
     }
   }
@@ -200,6 +208,10 @@ class FirestoreService {
       final docRef = _firestore.collection('auditions').doc();
       final data = audition.toMap();
       data['id'] = docRef.id;
+      data['status'] = audition.status.name;
+      // Ensure timestamps are set even when the caller passes null.
+      data['createdAt'] = data['createdAt'] ?? FieldValue.serverTimestamp();
+      data['updatedAt'] = data['updatedAt'] ?? FieldValue.serverTimestamp();
       await docRef.set(data);
       return docRef.id;
     } catch (e) {
