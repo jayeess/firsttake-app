@@ -99,7 +99,15 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.error_outline, color: Colors.white, size: 20),
+            Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(Icons.error_outline, color: Colors.white,
+                  size: 18),
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
@@ -107,6 +115,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 style: const TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 14,
+                  letterSpacing: 0.1,
                 ),
               ),
             ),
@@ -114,9 +123,11 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
         ),
         backgroundColor: AppColors.error,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         margin: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         duration: const Duration(seconds: 4),
+        elevation: 6,
       ),
     );
   }
@@ -281,8 +292,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
         bottom: 24,
         left: 8,
       ),
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
@@ -291,10 +302,17 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
             AppColors.primaryLight,
           ],
         ),
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(32),
-          bottomRight: Radius.circular(32),
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(36),
+          bottomRight: Radius.circular(36),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -303,8 +321,11 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
             onPressed: () => context.pop(),
             icon: const Icon(Icons.arrow_back_ios_new,
                 size: 20, color: Colors.white),
+            style: IconButton.styleFrom(
+              backgroundColor: Colors.white.withValues(alpha: 0.15),
+            ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           Center(
             child: Column(
               children: [
@@ -316,12 +337,21 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                         letterSpacing: -0.5,
                       ),
                 ),
-                const SizedBox(height: 6),
-                Text(
-                  'Join FirstTake and start your journey',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.white.withValues(alpha: 0.85),
+                const SizedBox(height: 8),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    'Join FirstTake and start your journey',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.white.withValues(alpha: 0.9),
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
               ],
@@ -333,35 +363,53 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   }
 
   Widget _buildTermsCheckbox() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeInOut,
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
       decoration: BoxDecoration(
         color: _acceptedTerms
-            ? AppColors.primary.withValues(alpha: 0.05)
+            ? AppColors.primary.withValues(alpha: 0.06)
             : AppColors.surfaceVariant.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: _acceptedTerms
-              ? AppColors.primary.withValues(alpha: 0.3)
+              ? AppColors.primary.withValues(alpha: 0.4)
               : AppColors.border.withValues(alpha: 0.5),
+          width: _acceptedTerms ? 1.5 : 1.0,
         ),
+        boxShadow: _acceptedTerms
+            ? [
+                BoxShadow(
+                  color: AppColors.primary.withValues(alpha: 0.08),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ]
+            : null,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(
-            height: 24,
-            width: 24,
-            child: Checkbox(
-              value: _acceptedTerms,
-              onChanged: (val) {
-                setState(() => _acceptedTerms = val ?? false);
-              },
-              activeColor: AppColors.primary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5),
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: 26,
+            height: 26,
+            decoration: BoxDecoration(
+              color: _acceptedTerms
+                  ? AppColors.primary
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(7),
+              border: Border.all(
+                color: _acceptedTerms
+                    ? AppColors.primary
+                    : AppColors.border,
+                width: 2,
               ),
             ),
+            child: _acceptedTerms
+                ? const Icon(Icons.check, size: 16, color: Colors.white)
+                : null,
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -406,8 +454,15 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surfaceVariant,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border.withValues(alpha: 0.5)),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.border.withValues(alpha: 0.4)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       padding: const EdgeInsets.all(5),
       child: Row(
@@ -446,45 +501,63 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: 18),
           decoration: BoxDecoration(
             color: isSelected ? Colors.white : Colors.transparent,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(14),
             boxShadow: isSelected
                 ? [
                     BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.15),
-                      blurRadius: 12,
+                      color: AppColors.primary.withValues(alpha: 0.18),
+                      blurRadius: 16,
                       offset: const Offset(0, 4),
+                    ),
+                    BoxShadow(
+                      color: AppColors.primary.withValues(alpha: 0.06),
+                      blurRadius: 4,
+                      offset: const Offset(0, 1),
                     ),
                   ]
                 : null,
             border: isSelected
                 ? Border.all(
-                    color: AppColors.primary.withValues(alpha: 0.3),
+                    color: AppColors.primary.withValues(alpha: 0.35),
                     width: 1.5,
                   )
                 : null,
           ),
           child: Column(
             children: [
-              Container(
-                width: 40,
-                height: 40,
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                width: 44,
+                height: 44,
                 decoration: BoxDecoration(
-                  color: isSelected
-                      ? AppColors.primary.withValues(alpha: 0.1)
-                      : AppColors.surfaceVariant,
+                  gradient: isSelected
+                      ? LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            AppColors.primary.withValues(alpha: 0.15),
+                            AppColors.primaryLight.withValues(alpha: 0.08),
+                          ],
+                        )
+                      : null,
+                  color: isSelected ? null : AppColors.surfaceVariant,
                   shape: BoxShape.circle,
+                  border: isSelected
+                      ? Border.all(
+                          color: AppColors.primary.withValues(alpha: 0.2))
+                      : null,
                 ),
                 child: Icon(
                   icon,
-                  size: 20,
+                  size: 22,
                   color:
                       isSelected ? AppColors.primary : AppColors.textSecondary,
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 10),
               Text(
                 label,
                 style: TextStyle(
@@ -494,7 +567,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       isSelected ? AppColors.primary : AppColors.textSecondary,
                 ),
               ),
-              const SizedBox(height: 2),
+              const SizedBox(height: 3),
               Text(
                 description,
                 style: TextStyle(
