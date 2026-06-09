@@ -26,7 +26,14 @@ final auditionDetailProvider = FutureProvider.autoDispose
 
 final recruiterAuditionsProvider = FutureProvider.autoDispose
     .family<List<Audition>, String>((ref, recruiterId) async {
-  return ref.read(firestoreServiceProvider).getRecruiterAuditions(recruiterId);
+  try {
+    return await ref
+        .read(firestoreServiceProvider)
+        .getRecruiterAuditions(recruiterId);
+  } catch (e) {
+    debugPrint('recruiterAuditionsProvider error: $e');
+    rethrow;
+  }
 });
 
 class AuditionFilters {

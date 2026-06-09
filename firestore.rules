@@ -68,9 +68,8 @@ service cloud.firestore {
 
     // Auditions collection
     match /auditions/{auditionId} {
-      allow read: if isAuthenticated();
-      allow list: if isAuthenticated();
-      allow create: if isRecruiter();
+      allow read, list: if isAuthenticated();
+      allow create: if isAuthenticated();
       allow update: if request.auth.uid == resource.data.recruiterId || isAdmin();
       allow delete: if request.auth.uid == resource.data.recruiterId || isAdmin();
 

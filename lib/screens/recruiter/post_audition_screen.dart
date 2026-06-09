@@ -150,6 +150,7 @@ class _PostAuditionScreenState extends ConsumerState<PostAuditionScreen> {
           '';
 
       final now = DateTime.now();
+      final positionsText = _positionsController.text.trim();
       final audition = Audition(
         id: '',
         recruiterId: userId,
@@ -158,6 +159,14 @@ class _PostAuditionScreenState extends ConsumerState<PostAuditionScreen> {
         category: _selectedCategory!,
         experienceLevel: _selectedExperience!,
         location: _locationController.text.trim(),
+        duration: _durationController.text.trim().isNotEmpty
+            ? _durationController.text.trim()
+            : null,
+        requirements: _requirementsController.text.trim().isNotEmpty
+            ? _requirementsController.text.trim()
+            : null,
+        numberOfPositions:
+            positionsText.isNotEmpty ? (int.tryParse(positionsText) ?? 1) : 1,
         payInfo: _payController.text.trim().isNotEmpty
             ? _payController.text.trim()
             : null,

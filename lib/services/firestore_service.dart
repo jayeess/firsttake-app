@@ -244,16 +244,25 @@ class FirestoreService {
   /// Returns all auditions created by the given [recruiterId].
   Future<List<Audition>> getRecruiterAuditions(String recruiterId) async {
     try {
+      debugPrint('getRecruiterAuditions: querying for recruiterId=$recruiterId');
       final snapshot = await _firestore
           .collection('auditions')
           .where('recruiterId', isEqualTo: recruiterId)
           .orderBy('createdAt', descending: true)
           .get();
 
-      return snapshot.docs
-          .map((doc) => Audition.fromMap(doc.data()))
-          .toList();
+      debugPrint('getRecruiterAuditions: found ${snapshot.docs.length} docs');
+      final List<Audition> auditions = [];
+      for (final doc in snapshot.docs) {
+        try {
+          auditions.add(Audition.fromMap(doc.data()));
+        } catch (e) {
+          debugPrint('Skipping malformed audition ${doc.id}: $e');
+        }
+      }
+      return auditions;
     } catch (e) {
+      debugPrint('getRecruiterAuditions FAILED: $e');
       throw Exception('Failed to get recruiter auditions: $e');
     }
   }

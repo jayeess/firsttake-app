@@ -111,7 +111,7 @@ class _MyAuditionsTab extends ConsumerWidget {
         error: (error, _) => EmptyState(
           icon: Icons.error_outline,
           title: 'Could not load auditions',
-          subtitle: 'Something went wrong. Please try again.',
+          subtitle: error.toString(),
           action: TextButton.icon(
             onPressed: () =>
                 ref.invalidate(recruiterAuditionsProvider(userId)),
@@ -245,22 +245,24 @@ class _AuditionListCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(width: 10),
-                  Icon(Icons.schedule,
-                      size: 16,
-                      color: audition.deadline!.isPast
-                          ? AppColors.error
-                          : AppColors.textSecondary),
-                  const SizedBox(width: 4),
-                  Text(
-                    audition.deadline!.daysUntil,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: audition.deadline!.isPast
-                          ? AppColors.error
-                          : AppColors.textSecondary,
+                  if (audition.deadline != null) ...[
+                    const SizedBox(width: 10),
+                    Icon(Icons.schedule,
+                        size: 16,
+                        color: audition.deadline!.isPast
+                            ? AppColors.error
+                            : AppColors.textSecondary),
+                    const SizedBox(width: 4),
+                    Text(
+                      audition.deadline!.daysUntil,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: audition.deadline!.isPast
+                            ? AppColors.error
+                            : AppColors.textSecondary,
+                      ),
                     ),
-                  ),
+                  ],
                 ],
               ),
               const SizedBox(height: 12),
@@ -280,11 +282,12 @@ class _AuditionListCard extends StatelessWidget {
                           const TextStyle(fontSize: 12, color: AppColors.textHint),
                     ),
                     const Spacer(),
-                    Text(
-                      'Deadline: ${audition.deadline!.formattedDate}',
-                      style:
-                          const TextStyle(fontSize: 12, color: AppColors.textHint),
-                    ),
+                    if (audition.deadline != null)
+                      Text(
+                        'Deadline: ${audition.deadline!.formattedDate}',
+                        style:
+                            const TextStyle(fontSize: 12, color: AppColors.textHint),
+                      ),
                   ],
                 ),
               ),
